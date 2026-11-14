@@ -12,21 +12,33 @@
 
     <div class="stats" aria-live="polite">
         <span>☀️ Sunlight: <span id="sunCount">0</span></span>
-        <span>🌱 Plants bloomed: <span id="plantCount">0</span>/1</span>
+        <span>🌱 Plants bloomed: <span id="plantCount">0</span>/3</span>
     </div>
 
     <main>
         <div class="game" id="game" aria-label="Pastel garden game">
             <div class="tree" aria-hidden="true">🌸</div>
             <div class="pond" aria-hidden="true">🪷</div>
-            <div class="bench" aria-hidden="true">🪑</div>
+            <div class="bench" id="bench" aria-label="Garden bench">
+                <span class="bench-back"></span>
+                <span class="bench-seat"></span>
+                <span class="bench-leg leg-left"></span>
+                <span class="bench-leg leg-right"></span>
+            </div>
+            <div class="picnic-table" id="picnicTable" aria-label="Picnic table with snacks">
+                <span class="table-top">🍓 🍰 🍓</span>
+                <span class="table-leg leg-left"></span>
+                <span class="table-leg leg-right"></span>
+            </div>
 
             <div class="message" id="message" role="status">
                 Find sunlight and help your plant bloom!
             </div>
 
             <div id="sun" class="sun" aria-label="Sunlight collectible">☀️</div>
-            <div id="plant" class="plant" aria-label="A little plant">🌱</div>
+            <div class="plant" data-plant="0" aria-label="Unbloomed flower bed">🌱</div>
+            <div class="plant" data-plant="1" aria-label="Unbloomed flower bed">🌱</div>
+            <div class="plant" data-plant="2" aria-label="Unbloomed flower bed">🌱</div>
 
             <div id="likhi" class="actor likhi" aria-label="Likhi">
                 <div class="sprite" role="img" aria-label="Likhi, a girl with long brown hair, glasses, a pink bow and pink dress"></div>
@@ -50,7 +62,7 @@
     </main>
 
     <section class="mobile-controls" aria-label="Touch game controls">
-        <p>Choose a character, then use the arrows to move.</p>
+        <p>Choose a character, use the arrows, and tap an activity.</p>
         <div class="character-select" role="group" aria-label="Choose character">
             <button type="button" data-select-actor="likhi" aria-pressed="true">Likhi</button>
             <button type="button" data-select-actor="toxii" aria-pressed="false">Toxii</button>
@@ -64,13 +76,19 @@
                 <button type="button" class="down" data-direction="down" aria-label="Move down">↓</button>
                 <button type="button" class="right" data-direction="right" aria-label="Move right">→</button>
             </div>
-            <button type="button" class="give-sunlight" id="giveSunlightButton">Give sunlight ☀️</button>
+            <div class="activity-buttons" role="group" aria-label="Garden activities">
+                <button type="button" data-action="interact">Garden task 🌱</button>
+                <button type="button" data-action="sit">Sit together 🪑</button>
+                <button type="button" data-action="eat">Eat snacks 🍓</button>
+                <button type="button" data-action="hug">Hug 💗</button>
+                <button type="button" data-action="kiss">Kiss 💕</button>
+            </div>
         </div>
     </section>
 
     <p class="instructions">
         Likhi: arrows / WASD · Toxii: IJKL · Snoopi: TFGH · Milky: numpad 8/4/5/6<br>
-        Move Likhi near ☀️ to collect it, then press E near the plant.
+        E: garden task · Q: hug · C: kiss (move Likhi and Toxii close first).
     </p>
 
     <script src="script.js"></script>

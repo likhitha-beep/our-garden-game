@@ -64,6 +64,7 @@ h1 {
 .tree,
 .pond,
 .bench,
+.picnic-table,
 .sun,
 .plant {
     position: absolute;
@@ -94,9 +95,91 @@ h1 {
 
 .bench {
     z-index: 1;
-    top: 55px;
-    right: 28px;
-    font-size: 34px;
+    top: 112px;
+    left: 398px;
+    width: 122px;
+    height: 50px;
+}
+
+.bench-back,
+.bench-seat,
+.bench-leg {
+    position: absolute;
+    display: block;
+    border: 3px solid #845044;
+    background: #d88a72;
+}
+
+.bench-back {
+    top: 0;
+    left: 7px;
+    width: 108px;
+    height: 22px;
+    border-radius: 6px 6px 2px 2px;
+    background: repeating-linear-gradient(0deg, #d88a72 0 5px, #c57465 5px 8px);
+}
+
+.bench-seat {
+    top: 21px;
+    left: 3px;
+    width: 116px;
+    height: 13px;
+    border-radius: 3px;
+    background: #e6a184;
+}
+
+.bench-leg {
+    top: 32px;
+    left: 18px;
+    width: 8px;
+    height: 17px;
+    border-top: 0;
+    background: #a96755;
+}
+
+.bench-leg.leg-right {
+    right: 18px;
+    left: auto;
+}
+
+.picnic-table {
+    z-index: 1;
+    top: 254px;
+    left: 400px;
+    width: 128px;
+    height: 70px;
+}
+
+.table-top {
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: flex;
+    width: 128px;
+    height: 30px;
+    align-items: center;
+    justify-content: center;
+    border: 3px solid #96624c;
+    border-radius: 7px;
+    background: #f1bd86;
+    font-size: 17px;
+}
+
+.table-leg {
+    position: absolute;
+    top: 27px;
+    left: 19px;
+    display: block;
+    width: 10px;
+    height: 39px;
+    border: 2px solid #96624c;
+    border-top: 0;
+    background: #d5916b;
+}
+
+.table-leg.leg-right {
+    right: 19px;
+    left: auto;
 }
 
 .sun {
@@ -108,9 +191,30 @@ h1 {
 
 .plant {
     z-index: 2;
-    top: 210px;
-    left: 440px;
-    font-size: 36px;
+    top: 198px;
+    left: 330px;
+    display: flex;
+    width: 42px;
+    height: 30px;
+    align-items: center;
+    justify-content: center;
+    border: 3px solid #a76d56;
+    border-radius: 50%;
+    background: #b9815e;
+    font-size: 20px;
+}
+
+.plant[data-plant="1"] {
+    left: 382px;
+}
+
+.plant[data-plant="2"] {
+    left: 434px;
+}
+
+.plant.bloomed {
+    background: #7dca72;
+    border-color: #52945a;
 }
 
 .actor {
@@ -187,6 +291,54 @@ h1 {
     animation: walk-cycle 0.3s steps(1, end) infinite;
 }
 
+.actor.seated .sprite {
+    transform: translateY(9px) scaleY(0.78);
+    transform-origin: bottom center;
+}
+
+.actor.hugging .sprite,
+.actor.kissing .sprite,
+.actor.eating .sprite {
+    animation: happy-bounce 0.45s ease-in-out infinite alternate;
+}
+
+.actor.hugging::after,
+.actor.kissing::after,
+.actor.eating::after {
+    position: absolute;
+    top: 5px;
+    right: 0;
+    content: "\2665";
+    color: #ef77aa;
+    font-size: 18px;
+    animation: float-heart 0.7s ease-in-out infinite alternate;
+}
+
+.actor.eating::after {
+    content: "\2665";
+    color: #f0a94f;
+}
+
+@keyframes happy-bounce {
+    from {
+        transform: translateY(0);
+    }
+
+    to {
+        transform: translateY(-4px);
+    }
+}
+
+@keyframes float-heart {
+    from {
+        transform: translateY(3px) scale(0.85);
+    }
+
+    to {
+        transform: translateY(-4px) scale(1.1);
+    }
+}
+
 @keyframes walk-cycle {
     from {
         background-position: 0 0;
@@ -248,13 +400,25 @@ h1 {
     background: #f7c4dc;
     box-shadow: inset 0 0 0 2px #fff0f7;
 }
-
+ 
 .touch-actions {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 28px;
+    gap: 16px;
     margin: 12px auto 0;
+}
+
+.activity-buttons {
+    display: flex;
+    max-width: 260px;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 6px;
+}
+
+.activity-buttons button {
+    padding: 5px 9px;
 }
 
 .direction-pad {
@@ -304,17 +468,43 @@ h1 {
     }
 
     .plant {
-        left: 75%;
+        top: 185px;
+    }
+
+    .plant[data-plant="0"] {
+        left: 44%;
+    }
+
+    .plant[data-plant="1"] {
+        left: 60%;
+    }
+
+    .plant[data-plant="2"] {
+        left: 76%;
     }
 
     .snoopi {
-        top: 220px;
-        left: 32%;
+        top: 230px;
+        left: 26%;
     }
 
     .milky {
-        top: 220px;
+        top: 230px;
         left: 62%;
+    }
+
+    .bench {
+        top: 95px;
+        left: 52%;
+        transform: scale(0.8);
+        transform-origin: top left;
+    }
+
+    .picnic-table {
+        top: 246px;
+        left: 65%;
+        transform: scale(0.8);
+        transform-origin: top left;
     }
 
     .mobile-controls {
@@ -323,6 +513,14 @@ h1 {
 
     .instructions {
         font-size: 11px;
+    }
+
+    .touch-actions {
+        gap: 8px;
+    }
+
+    .activity-buttons {
+        max-width: 180px;
     }
 }
 

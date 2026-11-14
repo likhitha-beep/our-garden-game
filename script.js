@@ -1,6 +1,8 @@
 const game = document.getElementById("game");
 const sun = document.getElementById("sun");
-const plant = document.getElementById("plant");
+const plants = Array.from(game.querySelectorAll("[data-plant]"));
+const bench = document.getElementById("bench");
+const picnicTable = document.getElementById("picnicTable");
 const message = document.getElementById("message");
 const sunCount = document.getElementById("sunCount");
 const plantCount = document.getElementById("plantCount");
@@ -45,12 +47,15 @@ const actors = [
 ];
 
 const pressedKeys = new Set();
-const obstacles = Array.from(game.querySelectorAll(".tree, .pond, .bench, #plant"));
+const obstacles = Array.from(
+    game.querySelectorAll(".tree, .pond, .bench, .picnic-table, .plant")
+);
 const speed = 155;
 let selectedActor = 0;
 let hasSunlight = false;
-let plantBloomed = false;
+let bloomedPlants = 0;
 let previousTime = 0;
+const actionTimers = new Set();
 
 actors.forEach((actor) => {
     actor.x = actor.element.offsetLeft;
@@ -71,7 +76,12 @@ document.addEventListener("keydown", (event) => {
 
     if (event.code === "KeyE") {
         event.preventDefault();
-        if (!event.repeat) giveSunlight();
+        if (!event.repeat) doAction("interact");
+    }
+
+    if (event.code === "KeyQ" || event.code === "KeyC") {
+        event.preventDefault();
+        if (!event.repeat) doAction(event.code === "KeyQ" ? "hug" : "kiss");
     }
 });
 
@@ -115,7 +125,9 @@ document.querySelectorAll("[data-direction]").forEach((button) => {
 
 document.addEventListener("pointerup", releaseTouchDirection);
 document.addEventListener("pointercancel", releaseTouchDirection);
-document.getElementById("giveSunlightButton").addEventListener("click", giveSunlight);
+document.querySelectorAll("[data-action]").forEach((button) => {
+    button.addEventListener("click", () => doAction(button.dataset.action));
+});
 
 window.addEventListener("blur", () => {
     pressedKeys.clear();
@@ -185,33 +197,135 @@ function collectSunlight() {
         hasSunlight = true;
         sun.hidden = true;
         sunCount.textContent = "1";
-        message.textContent = "You collected sunlight! Find your plant.";
+        message.textContent = "You found sunlight! Give it to any little flower bed.";
     }
 }
 
-function giveSunlight() {
-    if (plantBloomed) {
-        message.textContent = "Your flower is already blooming!";
-        return;
-    }
-
+function bloomPlant(plantBed) {
     if (!hasSunlight) {
-        message.textContent = "Find the sun first!";
+        message.textContent = "Find the sunlight first, then bring it to a flower bed.";
         return;
     }
 
-    if (!isNear(actors[0], plant, 35)) {
-        message.textContent = "Walk Likhi closer to your plant!";
-        return;
-    }
-
-    plant.textContent = "🌻";
-    plant.setAttribute("aria-label", "A blooming sunflower");
-    plantBloomed = true;
-    plantCount.textContent = "1";
+    plantBed.textContent = ["🌷", "🌼", "🌸"][bloomedPlants];
+    plantBed.classList.add("bloomed");
+    plantBed.setAttribute("aria-label", "A blooming flower bed");
+    bloomedPlants += 1;
+    plantCount.textContent = String(bloomedPlants);
     sunCount.textContent = "0";
     hasSunlight = false;
-    message.textContent = "You helped your little plant bloom!";
+    sun.hidden = false;
+    message.textContent = bloomedPlants === plants.length
+        ? "All three flower beds are blooming! Your garden is lovely!"
+        : "A new flower bloomed! Collect more sunlight for the next one.";
+}
+
+function areLikhiAndToxiiNear(target, distance = 48) {
+    return isNear(actors[0], target, distance) &&
+        isNear(actors[1], target, distance);
+}
+
+function sitTogether() {
+    if (!areLikhiAndToxiiNear(bench, 55)) {
+        message.textContent = "Walk Likhi and Toxii close to the garden bench first.";
+        return;
+    }
+
+    const benchBox = getObstacleBox(bench);
+    [actors[0], actors[1]].forEach((actor, index) => {
+        actor.element.classList.remove("walking");
+        actor.element.classList.add("seated");
+        actor.x = Math.min(
+            benchBox.left + 5 + index * 52,
+            game.clientWidth - actor.element.offsetWidth
+        );
+        actor.y = Math.max(0, benchBox.top - 37);
+        actor.element.style.left = `${actor.x}px`;
+        actor.element.style.top = `${actor.y}px`;
+    });
+    message.textContent = "Likhi and Toxii are sitting together on the bench.";
+}
+
+function eatTogether() {
+    if (!areLikhiAndToxiiNear(picnicTable, 55)) {
+        message.textContent = "Bring both Likhi and Toxii over to the picnic table.";
+        return;
+    }
+
+    actors.slice(0, 2).forEach((actor) => {
+        actor.element.classList.remove("seated");
+        actor.element.classList.add("eating");
+    });
+    message.textContent = "They are sharing strawberries and cake at the picnic!";
+    clearActionAfter(1400, "eating");
+}
+
+function shareAffection(action) {
+    const likhi = actors[0];
+    const toxii = actors[1];
+    const distance = Math.hypot(
+        likhi.x - toxii.x,
+        likhi.y - toxii.y
+    );
+
+    if (distance > 92) {
+        message.textContent = `Move Likhi and Toxii closer for a ${action}.`;
+        return;
+    }
+
+    const className = action === "hug" ? "hugging" : "kissing";
+    actors.slice(0, 2).forEach((actor) => {
+        actor.element.classList.remove("seated");
+        actor.element.classList.add(className);
+    });
+    message.textContent = action === "hug"
+        ? "Likhi and Toxii share a warm hug. 💗"
+        : "Likhi and Toxii share a sweet kiss. 💕";
+    clearActionAfter(1400, className);
+}
+
+function clearActionAfter(duration, className) {
+    const timer = window.setTimeout(() => {
+        actors.slice(0, 2).forEach((actor) => {
+            actor.element.classList.remove(className);
+        });
+        actionTimers.delete(timer);
+    }, duration);
+    actionTimers.add(timer);
+}
+
+function doAction(action) {
+    if (action === "hug" || action === "kiss") {
+        shareAffection(action);
+        return;
+    }
+
+    if (action === "sit") {
+        sitTogether();
+        return;
+    }
+
+    if (action === "eat") {
+        eatTogether();
+        return;
+    }
+
+    const nearbyPlant = plants.find(
+        (plantBed) => !plantBed.classList.contains("bloomed") &&
+            isNear(actors[0], plantBed, 34)
+    );
+
+    if (nearbyPlant) {
+        bloomPlant(nearbyPlant);
+    } else if (isNear(actors[0], picnicTable, 40)) {
+        eatTogether();
+    } else if (isNear(actors[0], bench, 40)) {
+        sitTogether();
+    } else {
+        message.textContent = hasSunlight
+            ? "Take the sunlight to one of the three flower beds."
+            : "Explore the garden and collect the sunlight!";
+    }
 }
 
 function moveActor(actor, deltaTime) {
@@ -229,6 +343,10 @@ function moveActor(actor, deltaTime) {
     const nextX = Math.max(0, Math.min(actor.x + horizontal * distance, maxX));
     const nextY = Math.max(0, Math.min(actor.y + vertical * distance, maxY));
     let moved = false;
+
+    if (horizontal || vertical) {
+        actor.element.classList.remove("seated");
+    }
 
     if (nextX !== actor.x && canMove(actor, nextX, actor.y)) {
         actor.x = nextX;
