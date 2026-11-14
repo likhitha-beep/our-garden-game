@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our Garden</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>Likhi &amp; Toxii</h1>
+    <p class="subtitle">Our little world, growing together 🌷</p>
+
+    <div class="stats" aria-live="polite">
+        <span>☀️ Sunlight: <span id="sunCount">0</span></span>
+        <span>🌱 Plants bloomed: <span id="plantCount">0</span>/1</span>
+    </div>
+
+    <main>
+        <div class="game" id="game" aria-label="Pastel garden game">
+            <div class="tree" aria-hidden="true">🌸</div>
+            <div class="pond" aria-hidden="true">🪷</div>
+            <div class="bench" aria-hidden="true">🪑</div>
+
+            <div class="message" id="message" role="status">
+                Find sunlight and help your plant bloom!
+            </div>
+
+            <div id="sun" class="sun" aria-label="Sunlight collectible">☀️</div>
+            <div id="plant" class="plant" aria-label="A little plant">🌱</div>
+
+            <div id="likhi" class="actor likhi" aria-label="Likhi">
+                <div class="sprite" role="img" aria-label="Likhi, a girl with long brown hair, glasses, a pink bow and pink dress"></div>
+                <span>Likhi ♡</span>
+            </div>
+            <div id="toxii" class="actor toxii" aria-label="Toxii">
+                <div class="sprite" role="img" aria-label="Toxii, a boy with fluffy dark hair, a black hoodie and a pink heart"></div>
+                <span>Toxii ♡</span>
+            </div>
+            <div id="snoopi" class="actor snoopi" aria-label="Snoopi">
+                <div class="sprite" role="img" aria-label="Snoopi, a fluffy cream-colored dog"></div>
+                <span>Snoopi ♡</span>
+            </div>
+            <div id="milky" class="actor milky" aria-label="Milky">
+                <div class="sprite" role="img" aria-label="Milky, a cream dog with brown patches and floppy ears"></div>
+                <span>Milky ♡</span>
+            </div>
+
+            <div class="flowers" aria-hidden="true">🌷 🌼 🌷 🌼 🌷</div>
+        </div>
+    </main>
+
+    <section class="mobile-controls" aria-label="Touch game controls">
+        <p>Choose a character, then use the arrows to move.</p>
+        <div class="character-select" role="group" aria-label="Choose character">
+            <button type="button" data-select-actor="likhi" aria-pressed="true">Likhi</button>
+            <button type="button" data-select-actor="toxii" aria-pressed="false">Toxii</button>
+            <button type="button" data-select-actor="snoopi" aria-pressed="false">Snoopi</button>
+            <button type="button" data-select-actor="milky" aria-pressed="false">Milky</button>
+        </div>
+        <div class="touch-actions">
+            <div class="direction-pad" role="group" aria-label="Move selected character">
+                <button type="button" class="up" data-direction="up" aria-label="Move up">↑</button>
+                <button type="button" class="left" data-direction="left" aria-label="Move left">←</button>
+                <button type="button" class="down" data-direction="down" aria-label="Move down">↓</button>
+                <button type="button" class="right" data-direction="right" aria-label="Move right">→</button>
+            </div>
+            <button type="button" class="give-sunlight" id="giveSunlightButton">Give sunlight ☀️</button>
+        </div>
+    </section>
+
+    <p class="instructions">
+        Likhi: arrows / WASD · Toxii: IJKL · Snoopi: TFGH · Milky: numpad 8/4/5/6<br>
+        Move Likhi near ☀️ to collect it, then press E near the plant.
+    </p>
+
+    <script src="script.js"></script>
+</body>
+</html>
